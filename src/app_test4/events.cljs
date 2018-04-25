@@ -47,7 +47,7 @@
                                 [x2 y2] stop
                                 animated (.-Animated ReactNative)
                                 Value (.-ValueXY animated)
-                                position (Value. x1 y1)
+                                position (Value. #js {:x x1 :y y1})
                                 springcall  (fn []
                                               (.start (.spring animated position #js
                                                                {:toValue #js
@@ -64,7 +64,6 @@
 
 (reg-event-fx :animate-last (fn [{:keys [db]} [_ [x2 y2]]]
                               {:db (assoc db :cord [(last (:cord db))  [x2 y2]])
-                               :animate-spring {:start [0 (last (last (:cord db)))]
+                               :animate-spring {:start (last (:cord db))
                                                 :stop [x2 y2]
-                                                :layout :set-style-v1}}
-                              ))
+                                                :layout :set-style-v1}}))

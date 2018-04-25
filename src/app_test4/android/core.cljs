@@ -24,7 +24,9 @@
                             :onMoveShouldSetPanResponder #(do (js/console.log "onMoveShouldSetPanResponder called") true)
                             :onPanResponderGrant #(js/console.log "onPanResponderGrant called..")
                             :onPanResponderMove (fn [event g]
-                                                  (js/console.log "onPanResponderMove called.. event: " g))
+                                                  (let [x (.-dx g)
+                                                        y (.-dy g)]
+                                                    (dispatch [:animate-last [x y]])))
                             :onPanResponderRelease #(js/console.log "onPanResponderRelease called..")
                             :onPanResponderTerminate #(js/console.log "onPanResponderTerminate called..")})))
 
