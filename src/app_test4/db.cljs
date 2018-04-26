@@ -8,6 +8,7 @@
 
 ;; initial state of app-db
 (def app-db {:greeting "Hello Clojure in iOS and Android!"
+             :cord [[0 0] [0 0]]
              :cards [{:id 1,
                       :text "card #1",
                       :url
