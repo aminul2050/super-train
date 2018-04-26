@@ -56,14 +56,20 @@
                               (springcall)
                               (dispatch [layout (.getLayout position)])))))
 
-(reg-fx :animate-move (fn [{:keys [start stop layout]}]
-                          (let [[x1 y1] start
-                                [x2 y2] stop
-                                animated (.-Animated ReactNative)
-                                Value (.-ValueXY animated)
-                                position (Value. #js {:x x1 :y y1})]
-                            (do
-                              (dispatch [layout (.getLayout position)])))))
+(reg-fx :animate-fx-move (fn [{:keys [stop layout]}]
+                           (let [[x1 y1] stop
+                                 animated (.-Animated ReactNative)
+                                 Value (.-ValueXY animated)
+                                 position (Value. #js {:x x1 :y y1})]
+                             (do
+                               (js/console.log x1 " " y1)
+                               (dispatch [layout (.getLayout position)])))))
+
+(reg-event-fx :animate-move
+              (fn [_ [_ [x1 y1] ]]
+                { :animate-fx-move
+                 {:stop [x1 y1]
+                  :layout :set-style-v1}}))
 
 
 (reg-event-fx :animate (fn [{:keys [db]} [_ [x1 y1] [x2 y2]]]

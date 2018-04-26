@@ -26,7 +26,7 @@
                             :onPanResponderMove (fn [event g]
                                                   (let [x (.-dx g)
                                                         y (.-dy g)]
-                                                    (dispatch [:animate-last [x y]])))
+                                                    (dispatch [:animate-move [x y]])))
                             :onPanResponderRelease #(js/console.log "onPanResponderRelease called..")
                             :onPanResponderTerminate #(js/console.log "onPanResponderTerminate called..")})))
 
@@ -41,6 +41,7 @@
       [view
        [animated-view  {:style @layout}
         [view (merge (js->clj (.-panHandlers pan-handler))
+                     { :transform #js [ #js {:rotate "-45deg" }]}
                      { :style {:flex-direction "column"
                                :margin 10
                                :border-width 1
