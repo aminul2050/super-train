@@ -6,6 +6,7 @@
             :dependencies [[org.clojure/clojure "1.9.0"]
                            [org.clojure/clojurescript "1.9.946"]
                            [reagent "0.7.0" :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server cljsjs/create-react-class]]
+                           [binaryage/oops "0.6.1"]
                            [net.cgrand/macrovich       "0.2.0"]
                            [org.clojure/tools.logging  "0.3.1"]]
             :plugins [[lein-cljsbuild "1.1.4"]

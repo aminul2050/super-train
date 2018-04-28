@@ -17,3 +17,6 @@
 (reg-sub :get-coordinate
          (fn [db]
            (:cord db)))
+
+#_(reg-sub :style-x-test1
+         (fn [db] (get-in db [:animate-db :style-x :position] )))

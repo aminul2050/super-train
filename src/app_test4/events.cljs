@@ -42,6 +42,17 @@
  (fn [{:keys [db]} [_ ob]]
    {:db (assoc db :style-v1 ob)}))
 
+(reg-event-fx
+ :set-style-v1-extended
+ [validate-spec]
+ (fn [{:keys [db]} [_ ob]]
+   (if (= (count (:events ob)) 0)
+     {:db (assoc db :style-v1-extended ob)}
+     {:db (assoc db :style-v1-extended ob)
+      (first ob) :style-v1-extended})))
+
+
+
 (reg-fx :animate-spring (fn [{:keys [start stop layout]}]
                           (let [[x1 y1] start
                                 [x2 y2] stop
@@ -62,8 +73,28 @@
                                  Value (.-ValueXY animated)
                                  position (Value. #js {:x x1 :y y1})]
                              (do
-                               (js/console.log x1 " " y1)
                                (dispatch [layout (.getLayout position)])))))
+
+#_(reg-event-fx :interpolate-rotate
+              (fn [{:keys [db]} [_ style-event]]
+                {:db (assoc-in db
+                               [:animate-db
+                                style-event
+                                :rotate]
+                               (get-in db [:animate-db style-event
+                                           position]))}))
+
+(reg-event-fx :animate-fx-move3
+              (fn [{:keys [db]}  [_ [x1 y1] style-event]]
+                {:db (assoc db :animate-db
+                            (let [ animated (.-Animated ReactNative)
+                                  Value (.-ValueXY animated)
+                                  position (Value. #js {:x x1 :y y1})]
+                              {:obj animated
+                               style-event
+                               {:layout (.getLayout position)
+                                :position position}}
+                              ))}))
 
 (reg-event-fx :animate-move
               (fn [_ [_ [x1 y1] ]]
