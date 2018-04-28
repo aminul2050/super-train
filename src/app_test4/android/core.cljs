@@ -36,7 +36,8 @@
 (defn app-root []
   (let [greeting (subscribe [:get-greeting])
         layout (subscribe [:get-style-v1])
-        cards (subscribe [:get-cards])]
+        cards (subscribe [:get-cards])
+        layout2 (subscribe [:style-x-test2])]
     (fn []
       [view
        [animated-view  {:style @layout}
@@ -96,29 +97,56 @@
           [text {:style {:font-size 11
                          :color "#838786"}} "4th April, 2342"]]]
         ]
-       (map-indexed (fn [i card]
-              [view {:key (str "hello-" i)
-                     :style {:flex-direction "column"
-                             :margin 10
-                             :border-width 3
-                             :height 200
-                             :border-color "#FFFFFFCC"
-                             :align-items :center
-                             :justify-content :flex-end}}
-               [text {:style {:align-self "stretch"
-                              :elevation .2
-                              :font-size 22
-                              :font-weight "200"
-                              :text-align :right
-                              :padding-right 20
-                              :font-family "HelveticaNeue-CondenseBold"
-                              :background-color "#34333655"
-                              :color "#FFFFFFAA"
-                              }} (:text card)]
-               [image {:source {:uri (:url card)}
-                       :style  {:position :absolute
-                                :width "100%" :height "100%"}}]])
-            @cards)])))
+       (doall
+        (map-indexed
+         (fn [i card]
+           (let [v [view {:key (str "hello-" i)
+                          :style {:flex-direction "column"
+                                  :margin 10
+                                  :border-width 3
+                                  :height 200
+                                  :border-color "#FFFFFFCC"
+                                  :align-items :center
+                                  :justify-content :flex-end}}
+                    [text {:style {:align-self "stretch"
+                                   :elevation .2
+                                   :font-size 22
+                                   :font-weight "200"
+                                   :text-align :right
+                                   :padding-right 20
+                                   :font-family "HelveticaNeue-CondenseBold"
+                                   :background-color "#34333655"
+                                   :color "#FFFFFFAA"
+                                   }} (:text card)]
+                    [image {:source {:uri (:url card)}
+                            :style  {:position :absolute
+                                     :width "100%" :height "100%"}}]]]
+             (if (= i 0) [animated-view {:key (str "ahellov" i)
+                                         :style @layout2}
+                          [view {:key (str "hello-" i)
+                                 :style {:flex-direction "column"
+                                         :margin 10
+                                         :border-width 3
+                                         :height 200
+                                         :border-color "#FFFFFFCC"
+                                         :align-items :center
+                                         :justify-content :flex-end}}
+                           [text {:style {:align-self "stretch"
+                                          :elevation .2
+                                          :font-size 22
+                                          :font-weight "200"
+                                          :text-align :right
+                                          :padding-right 20
+                                          :font-family "HelveticaNeue-CondenseBold"
+                                          :background-color "#34333655"
+                                          :color "#FFFFFFAA"
+                                          }} (:text card)]
+                           [image {:source {:uri (:url card)}
+                                   :style  {:position :absolute
+                                            :width "100%" :height "100%"}}]]]
+                 v))
+           )
+         @cards))])))
 
 (defn init []
   (dispatch-sync [:initialize-db])

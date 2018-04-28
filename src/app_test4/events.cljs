@@ -1,5 +1,6 @@
 (ns app-test4.events
   (:require
+   [oops.core :as oops]
    [re-frame.core :refer [reg-event-fx after reg-event-db reg-fx dispatch]]
    [clojure.spec.alpha :as s]
    [app-test4.db :as db :refer [app-db]]))
@@ -87,13 +88,21 @@
 (reg-event-fx :animate-fx-move3
               (fn [{:keys [db]}  [_ [x1 y1] style-event]]
                 {:db (assoc db :animate-db
-                            (let [ animated (.-Animated ReactNative)
+                            (let [animated (.-Animated ReactNative)
                                   Value (.-ValueXY animated)
                                   position (Value. #js {:x x1 :y y1})]
                               {:obj animated
                                style-event
-                               {:layout (.getLayout position)
-                                :position position}}
+                               (let [pos (.getLayout position)
+                                     rotate (oops/ocall
+                                             position [:x :interpolate]
+                                             #js {:inputRange #js [-500 0 500]
+                                                  :outputRange #js ["-120deg" "0deg" "120deg"]} )
+                                     o #js {:transform #js [ #js {:rotate rotate}]}
+                                     e (goog.object/extend o pos)]
+                                 {:layout o
+                                  :position position
+                                  :rotate rotate})}
                               ))}))
 
 (reg-event-fx :animate-move
@@ -114,3 +123,8 @@
                                :animate-spring {:start (last (:cord db))
                                                 :stop [x2 y2]
                                                 :layout :set-style-v1}}))
+
+#_(dispatch [:animate-fx-move3 [100 10] :style-x])
+#_(oops/ocall @(rf/subscribe [:style-x-test1])  "x.interpolate"
+              #js {:inputRange #js [-500 0 500]
+                   :outputRange #js ["-120deg" "0deg" "120deg"]} )

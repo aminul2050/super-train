@@ -11,6 +11,7 @@
    (:cards db)))
 
 (reg-sub :get-style-v1
+
          (fn [db]
            (:style-v1 db)))
 
@@ -18,5 +19,8 @@
          (fn [db]
            (:cord db)))
 
-#_(reg-sub :style-x-test1
-         (fn [db] (get-in db [:animate-db :style-x :position] )))
+(reg-sub :style-x-test2
+         (fn [db] (get-in db [:animate-db :style-x :layout])))
+
+(reg-sub :style-x-test1
+           (fn [db] (get-in db [:animate-db :style-x :position] )))
