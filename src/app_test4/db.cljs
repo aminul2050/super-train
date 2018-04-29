@@ -2,12 +2,15 @@
   (:require [clojure.spec.alpha :as s]))
 
 ;; spec of app-db
+(def width (.-width (.get (.-Dimensions (js/require "react-native")) "window")))
+
 (s/def ::greeting string?)
 (s/def ::app-db
   (s/keys :req-un [::greeting]))
 
 ;; initial state of app-db
-(def app-db {:greeting "Hello Clojure in iOS and Android!"
+(def app-db {:width width
+             :greeting "Hello Clojure in iOS and Android!"
              :cord [[0 0] [0 0]]
              :cards [{:id 1,
                       :text "card #1",

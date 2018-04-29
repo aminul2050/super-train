@@ -8,6 +8,7 @@
 (def ReactNative (js/require "react-native"))
 ;; -- Interceptors ------------------------------------------------------------
 ;;
+
 ;; See https://github.com/Day8/re-frame/blob/master/docs/Interceptors.md
 ;;
 (defn check-and-throw
@@ -68,6 +69,22 @@
                               (springcall)
                               (dispatch [layout (.getLayout position)])))))
 
+(reg-event-fx
+ :animate-spring2
+ (fn [{:keys [db]} [_ [x2 y2] style]]
+   (let [position (get-in db [:animate-db style :position])
+         animated (get-in db [:animate-db :obj])
+         springcall  (fn []
+                       (.start (.spring animated position #js
+                                        {:toValue #js
+                                         {:x x2 :y y2}})))]
+     (do
+       (springcall)
+       {:db (assoc-in db
+                      [:animate-db style] {:postion position
+                                           :layout (.getLayout position)})}))))
+
+
 (reg-fx :animate-fx-move (fn [{:keys [stop layout]}]
                            (let [[x1 y1] stop
                                  animated (.-Animated ReactNative)
@@ -124,6 +141,11 @@
                                                 :stop [x2 y2]
                                                 :layout :set-style-v1}}))
 
+(reg-event-fx :animate-position (fn [{:keys [db]} [_ [x2 y2]]]
+                                  {:db (assoc db :cord [(last (:cord db))  [x2 y2]])
+                                   :animate-spring {:start (last (:cord db))
+                                                :stop [x2 y2]
+                                                :layout :set-style-v1}}))
 #_(dispatch [:animate-fx-move3 [100 10] :style-x])
 #_(oops/ocall @(rf/subscribe [:style-x-test1])  "x.interpolate"
               #js {:inputRange #js [-500 0 500]

@@ -11,7 +11,6 @@
 (def view (r/adapt-react-class (.-View ReactNative)))
 (def image (r/adapt-react-class (.-Image ReactNative)))
 (def touchable-highlight (r/adapt-react-class (.-TouchableHighlight ReactNative)))
-
 (def logo-img (js/require "./images/cljs.png"))
 
 (def style-sheet (.-StyleSheet ReactNative))
@@ -26,8 +25,11 @@
                             :onPanResponderMove (fn [event g]
                                                   (let [x (.-dx g)
                                                         y (.-dy g)]
-                                                    (dispatch [:animate-move [x y]])))
-                            :onPanResponderRelease #(js/console.log "onPanResponderRelease called..")
+                                                    (dispatch [:animate-fx-move3 [x y] :style-x])))
+                            :onPanResponderRelease (fn  [event g]
+                                                     (do
+                                                       (dispatch [:animate-spring2 [0 0] :style-x])
+                                                       (js/console.log "onPanResponderRelease called..: " g)))
                             :onPanResponderTerminate #(js/console.log "onPanResponderTerminate called..")})))
 
 (defn alert [title]
@@ -40,9 +42,8 @@
         layout2 (subscribe [:style-x-test2])]
     (fn []
       [view
-       [animated-view  {:style @layout}
+       [animated-view  {:style @layout2}
         [view (merge (js->clj (.-panHandlers pan-handler))
-                     { :transform #js [ #js {:rotate "-45deg" }]}
                      { :style {:flex-direction "column"
                                :margin 10
                                :border-width 1
@@ -122,7 +123,7 @@
                             :style  {:position :absolute
                                      :width "100%" :height "100%"}}]]]
              (if (= i 0) [animated-view {:key (str "ahellov" i)
-                                         :style @layout2}
+                                         :style @layout}
                           [view {:key (str "hello-" i)
                                  :style {:flex-direction "column"
                                          :margin 10
